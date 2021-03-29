@@ -4,7 +4,7 @@ Type-Pagination is simple pagination library for TypeScript.
 
 # Install
 
-Depends on what package manager do you use:
+Depending on what package manager do you use:
 
 ```
 yarn add type-pagination
