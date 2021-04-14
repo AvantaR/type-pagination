@@ -108,10 +108,36 @@ Output with set base url:
 }
 ```
 
+# Changing meta fields labels
+
+Since version 1.1.0 it is possible, to change default meta fields labels. There are two methods available. You can change just one label with `setMetaFieldLabel` method. As fierd argument you must provide what kind of key do you wish to change (itemCount,totalItems, itemsPerPage, totalPages or currentPage), as second argument you must pass new field name. For example:
+
+```Typescript
+pagination
+  .setMetaFieldLabel('totalItems', 'total')
+  .generate();
+```
+
+You can also change all labels at once using `setMetaFieldsLabels` method. As an argument, you must provide an object which satisfies the `MetaFieldsLabels` type. For example:
+
+```Typescript
+pagination
+  .setMetaFieldsLabels({
+    itemCount: 'items',
+    totalItems: 'total',
+    itemsPerPage: 'limit',
+    totalPages: 'pages',
+    currentPage: 'page',
+  })
+  .generate();
+```
+
 It is possible to chain methods e.g.:
 
 ```Typescript
 pagination
   .setBaseUrl('http://example.com')
+  .setMetaFieldLabel('totalItems', 'total')
+  .setMetaFieldLabel('currentPage', 'page')
   .generate();
 ```
