@@ -1,3 +1,5 @@
+import { MetaFieldsLabels } from './meta.fields.labels';
+
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 50;
 
@@ -6,6 +8,7 @@ export class Pagination<T> implements IPagination<T> {
   private page: number;
   private limit: number;
   private lastPage: number;
+  private metaFieldsLabels: MetaFieldsLabels;
 
   constructor(
     private items: T[],
@@ -16,17 +19,18 @@ export class Pagination<T> implements IPagination<T> {
     this.page = this.options?.page ?? DEFAULT_PAGE;
     this.limit = this.options?.limit ?? DEFAULT_LIMIT;
     this.lastPage = Math.ceil(this.total / this.limit);
+    this.metaFieldsLabels = this.options?.metaFieldsLabels ?? new MetaFieldsLabels();
   }
 
   generate(): Paginated<T> {
     return {
       items: this.items,
       meta: {
-        itemCount: this.items.length,
-        totalItems: this.total,
-        itemsPerPage: this.limit,
-        totalPages: this.lastPage,
-        currentPage: this.page,
+        [this.metaFieldsLabels.itemCount]: this.items.length,
+        [this.metaFieldsLabels.totalItems]: this.total,
+        [this.metaFieldsLabels.itemsPerPage]: this.limit,
+        [this.metaFieldsLabels.totalPages]: this.lastPage,
+        [this.metaFieldsLabels.currentPage]: this.page,
       },
       links: {
         first: this.getLink(1),
@@ -39,6 +43,18 @@ export class Pagination<T> implements IPagination<T> {
 
   setBaseUrl(url: string): this {
     this.baseUrl = url;
+
+    return this;
+  }
+
+  setMetaFieldsLables(fields: MetaFieldsLabels): this {
+    this.metaFieldsLabels = fields;
+
+    return this;
+  }
+
+  setMetaFieldLabel(field: MetaFieldKey, name: string): this {
+    this.metaFieldsLabels[field] = name;
 
     return this;
   }
@@ -64,6 +80,8 @@ export class Pagination<T> implements IPagination<T> {
   }
 }
 
+type MetaFieldKey = keyof MetaFieldsLabels;
+
 type Nullable<T> = T | null | undefined;
 
 export type PaginationFilter = Record<string, any>;
@@ -71,17 +89,12 @@ export type PaginationFilter = Record<string, any>;
 export type PaginationOptions = {
   page: number;
   limit: number;
+  metaFieldsLabels: MetaFieldsLabels;
 };
 
 export type Paginated<T> = {
   items: T[];
-  meta: {
-    itemCount: number;
-    totalItems: number;
-    itemsPerPage: number;
-    totalPages: number;
-    currentPage: number;
-  };
+  meta: Record<string, number>;
   links: {
     first: string;
     previous: string;

@@ -129,5 +129,95 @@ describe('Pagination', () => {
 
       expect(actualPagination).toStrictEqual(expectedPagination);
     });
+
+    it('returns pagination with changed meta field labels using setMetaFieldLabel', () => {
+      const items = [
+        {
+          id: 1,
+          name: 'Test 1',
+        },
+      ];
+
+      const pagination = new Pagination(items, 9, { page: 5, limit: 2 });
+      pagination.setMetaFieldLabel('currentPage', 'page');
+      pagination.setMetaFieldLabel('itemCount', 'items');
+      pagination.setMetaFieldLabel('totalItems', 'total');
+      pagination.setMetaFieldLabel('totalPages', 'pages');
+      pagination.setMetaFieldLabel('itemsPerPage', 'limit');
+
+      pagination.setBaseUrl('http://example.com');
+
+      const expectedPagination = {
+        items: [
+          {
+            id: 1,
+            name: 'Test 1',
+          },
+        ],
+        links: {
+          first: 'http://example.com?page=1&limit=2',
+          last: 'http://example.com?page=5&limit=2',
+          next: '',
+          previous: 'http://example.com?page=4&limit=2',
+        },
+        meta: {
+          page: 5,
+          items: 1,
+          limit: 2,
+          total: 9,
+          pages: 5,
+        },
+      };
+
+      const actualPagination = pagination.generate();
+
+      expect(actualPagination).toStrictEqual(expectedPagination);
+    });
+
+    it('returns pagination with changed meta field labels using setMetaFieldsLables', () => {
+      const items = [
+        {
+          id: 1,
+          name: 'Test 1',
+        },
+      ];
+
+      const pagination = new Pagination(items, 9, { page: 5, limit: 2 });
+      pagination.setMetaFieldsLables({
+        itemCount: 'items',
+        totalItems: 'total',
+        itemsPerPage: 'limit',
+        totalPages: 'pages',
+        currentPage: 'page',
+      });
+
+      pagination.setBaseUrl('http://example.com');
+
+      const expectedPagination = {
+        items: [
+          {
+            id: 1,
+            name: 'Test 1',
+          },
+        ],
+        links: {
+          first: 'http://example.com?page=1&limit=2',
+          last: 'http://example.com?page=5&limit=2',
+          next: '',
+          previous: 'http://example.com?page=4&limit=2',
+        },
+        meta: {
+          page: 5,
+          items: 1,
+          limit: 2,
+          total: 9,
+          pages: 5,
+        },
+      };
+
+      const actualPagination = pagination.generate();
+
+      expect(actualPagination).toStrictEqual(expectedPagination);
+    });
   });
 });
